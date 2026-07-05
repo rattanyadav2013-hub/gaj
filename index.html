@@ -3,50 +3,188 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Website</title>
+<title>Property Growth Projection</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     margin: 0;
     padding: 0;
-    background-color: #f8f9fa;
-    color: #212529;
+    background-color: #0f172a;
+    color: #f8fafc;
+    font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    min-height: 100vh;
 }
-header {
-    background: #212529;
-    color: #ffffff;
-    padding: 30px 0;
+.header {
+    width: 100%;
+    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    padding: 25px 0;
     text-align: center;
-}
-.container {
-    width: 85%;
-    max-width: 900px;
-    margin: 30px auto;
-    overflow: hidden;
-    padding: 30px;
-    background: #ffffff;
-    border-radius: 8px;
-    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 15px rgba(0,0,0,0.4);
 }
 h1 {
     margin: 0;
-    font-size: 2.5rem;
+    font-size: 2.2rem;
+    font-weight: 700;
+    letter-spacing: 1px;
 }
-h2 {
-    color: #007bff;
+.container {
+    width: 90%;
+    max-width: 1000px;
+    background-color: #1e293b;
+    border-radius: 16px;
+    padding: 40px;
+    margin-top: 40px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    margin-bottom: 40px;
 }
-p {
-    line-height: 1.6;
+.stats {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 40px;
+    gap: 20px;
+}
+.stat-box {
+    flex: 1;
+    background: #0f172a;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid #334155;
+    transition: transform 0.3s ease;
+}
+.stat-box:hover {
+    transform: translateY(-5px);
+}
+.stat-value {
+    font-size: 2.8rem;
+    font-weight: bold;
+    color: #10b981;
+    margin-bottom: 5px;
+}
+.stat-label {
+    font-size: 0.95rem;
+    color: #94a3b8;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+}
+.chart-container {
+    position: relative;
+    height: 55vh;
+    width: 100%;
+    background: #0f172a;
+    padding: 20px;
+    border-radius: 12px;
+    border: 1px solid #334155;
+    box-sizing: border-box;
 }
 </style>
 </head>
 <body>
-<header>
-<h1>Welcome to My Website</h1>
-</header>
-<div class="container">
-<h2>Hello World</h2>
-<p>This is a live static website deployed directly from a GitHub repository.</p>
+<div class="header">
+<h1>Property Growth Projection</h1>
 </div>
+<div class="container">
+<div class="stats">
+<div class="stat-box">
+<div class="stat-value">4.85</div>
+<div class="stat-label">Starting Gaj</div>
+</div>
+<div class="stat-box">
+<div class="stat-value">5.7%</div>
+<div class="stat-label">Annual Growth</div>
+</div>
+<div class="stat-box">
+<div class="stat-value" id="finalValue">0</div>
+<div class="stat-label">Value in 20 Years</div>
+</div>
+</div>
+<div class="chart-container">
+<canvas id="growthChart"></canvas>
+</div>
+</div>
+<script>
+const P = 4.85;
+const r = 0.057;
+const years = 20;
+const labels = [];
+const dataPoints = [];
+let finalAmount = 0;
+for (let t = 0; t <= years; t++) {
+    labels.push(`Year ${t}`);
+    const A = P * Math.pow((1 + r), t);
+    dataPoints.push(A.toFixed(3));
+    if (t === years) {
+        finalAmount = A;
+    }
+}
+document.getElementById('finalValue').innerText = finalAmount.toFixed(3);
+const ctx = document.getElementById('growthChart').getContext('2d');
+new Chart(ctx, {
+    type: 'line',
+    data: {
+        labels: labels,
+        datasets: [{
+            label: 'Accumulated Gaj Value',
+            data: dataPoints,
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.15)',
+            borderWidth: 3,
+            pointBackgroundColor: '#8b5cf6',
+            pointBorderColor: '#1e293b',
+            pointBorderWidth: 2,
+            pointRadius: 5,
+            pointHoverRadius: 7,
+            fill: true,
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+            legend: {
+                labels: {
+                    color: '#f8fafc',
+                    font: {
+                        size: 14,
+                        family: "'Segoe UI', sans-serif"
+                    }
+                }
+            },
+            tooltip: {
+                backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                titleFont: { size: 14 },
+                bodyFont: { size: 14 },
+                padding: 12,
+                displayColors: false,
+                callbacks: {
+                    label: function(context) {
+                        return context.parsed.y + ' Gaj';
+                    }
+                }
+            }
+        },
+        scales: {
+            x: {
+                ticks: { color: '#94a3b8' },
+                grid: {
+                    color: 'rgba(148, 163, 184, 0.1)',
+                    drawBorder: false
+                }
+            },
+            y: {
+                ticks: { color: '#94a3b8' },
+                grid: {
+                    color: 'rgba(148, 163, 184, 0.1)',
+                    drawBorder: false
+                }
+            }
+        }
+    }
+});
+</script>
 </body>
 </html>
