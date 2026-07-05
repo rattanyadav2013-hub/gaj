@@ -1,9 +1,12 @@
+HTML
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Property Growth Projection</title>
+<title>Continuous Property Growth</title>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <style>
 body {
@@ -19,7 +22,7 @@ body {
 }
 .header {
     width: 100%;
-    background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+    background: linear-gradient(135deg, #10b981, #047857);
     padding: 25px 0;
     text-align: center;
     box-shadow: 0 4px 15px rgba(0,0,0,0.4);
@@ -84,7 +87,7 @@ h1 {
 </head>
 <body>
 <div class="header">
-<h1>Property Growth Projection</h1>
+<h1>Continuous Growth Projection</h1>
 </div>
 <div class="container">
 <div class="stats">
@@ -94,7 +97,7 @@ h1 {
 </div>
 <div class="stat-box">
 <div class="stat-value">5.7%</div>
-<div class="stat-label">Annual Growth</div>
+<div class="stat-label">Continuous Growth Rate</div>
 </div>
 <div class="stat-box">
 <div class="stat-value" id="finalValue">0</div>
@@ -107,32 +110,39 @@ h1 {
 </div>
 <script>
 const P = 4.85;
-const r = 0.057;
+const r = 0.057; // 5.7% as a decimal
 const years = 20;
+
 const labels = [];
 const dataPoints = [];
 let finalAmount = 0;
+
 for (let t = 0; t <= years; t++) {
     labels.push(`Year ${t}`);
-    const A = P * Math.pow((1 + r), t);
+    
+    // CONTINUOUS COMPOUNDING MATH: A = P * e^(rt)
+    const A = P * Math.exp(r * t);
+    
     dataPoints.push(A.toFixed(3));
     if (t === years) {
         finalAmount = A;
     }
 }
+
 document.getElementById('finalValue').innerText = finalAmount.toFixed(3);
+
 const ctx = document.getElementById('growthChart').getContext('2d');
 new Chart(ctx, {
     type: 'line',
     data: {
         labels: labels,
         datasets: [{
-            label: 'Accumulated Gaj Value',
+            label: 'Accumulated Gaj Value (Continuous)',
             data: dataPoints,
             borderColor: '#10b981',
             backgroundColor: 'rgba(16, 185, 129, 0.15)',
             borderWidth: 3,
-            pointBackgroundColor: '#8b5cf6',
+            pointBackgroundColor: '#10b981',
             pointBorderColor: '#1e293b',
             pointBorderWidth: 2,
             pointRadius: 5,
